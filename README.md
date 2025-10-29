@@ -19,7 +19,7 @@ A full-stack app that:
 
 ```bash
 # 1. Setup
-cp .env.example .env
+touch .env # create env file with openai key
 # Edit .env: add OPENAI_API_KEY=sk-your-key-here
 
 # 2. Start services
@@ -35,6 +35,8 @@ cd frontend && npm install && npm run dev
 **Backend**: http://localhost:8000 | **Frontend**: http://localhost:5173
 
 **Sample decks**: https://drive.google.com/drive/folders/1Dz7x752gZCGQDSSMcIMDL6Z5WOzrCUMd
+
+**Note**: Backend code changes auto-reload. If you modify `tasks.py`, restart Celery: `docker-compose restart celery`
 
 ---
 
@@ -118,11 +120,7 @@ frontend/components/
 In your PR description, include:
 - **What you implemented**: Overview of the code you wrote
 - **Major design decisions**: Key technical choices and why you made them
-- **Production considerations**: Anything relevant for introducing this code to production (error handling, scalability, monitoring, security, etc.)
-- **Testing instructions**: How to test your implementation
 - **Trade-offs**: What you optimized for and what you deprioritized
-
-**Note**: Your work is private. Other candidates cannot see your PR.
 
 ---
 
@@ -133,6 +131,17 @@ In your PR description, include:
 - Design your data model thoughtfully
 - Test incrementally
 - Be creative - no single "right" answer
+
+## Troubleshooting
+
+**Celery changes not taking effect?**  
+Restart the worker: `docker-compose restart celery`
+
+**Added new Python packages?**  
+Rebuild: `docker-compose up --build`
+
+**Database changes?**  
+Run migrations: `docker-compose exec web python manage.py makemigrations && docker-compose exec web python manage.py migrate`
 
 ---
 
