@@ -1,341 +1,153 @@
 # Pitch Deck Analyzer - Coding Exercise
 
-## Overview
-
-You'll build an **AI-powered pitch deck analyzer** for venture capital investors. Upload a pitch deck PDF, extract key information, assess the investment opportunity, and display comprehensive analysis in a web interface.
-
-**Time**: 3-5 hours  
-**Stack**: Django + React + OpenAI API + Your choice of tools  
-**Approach**: Creative solutions encouraged!
-
----
+Build an AI-powered pitch deck analyzer for VC investors. **Time: 2-4 hours**
 
 ## What You're Building
 
-A full-stack application that:
+A full-stack app that:
+1. Accepts pitch deck PDFs via API
+2. Extracts relevant information using AI
+3. Generates investment analysis
+4. Displays results in a well-designed interface
+5. Processes asynchronously (Celery)
 
-1. **Accepts pitch deck PDFs** via REST API
-2. **Extracts relevant information** from the deck (you decide what matters)
-3. **Generates investment analysis** using AI (assess quality, market, team, etc.)
-4. **Displays results** in a well-designed frontend interface
-5. **Processes asynchronously** (no blocking requests)
-
-**Key Challenge**: Decide what information matters for VC investment decisions and design an effective way to present it.
+**Key Challenge**: You decide what information matters for VC decisions and how to present it effectively.
 
 ---
 
-## Setup
-
-### Prerequisites
-- Python 3.11+, Node.js 18+, Docker & Docker Compose
-- OpenAI API key
-
-### Start the Application
+## Quick Start
 
 ```bash
-# 1. Configure environment
+# 1. Setup
 cp .env.example .env
-# Edit .env and add: OPENAI_API_KEY=sk-your-key-here
+# Edit .env: add OPENAI_API_KEY=sk-your-key-here
 
 # 2. Start services
 docker-compose up --build
 
-# 3. Run migrations (new terminal)
+# 3. Migrate (new terminal)
 docker-compose exec web python manage.py migrate
 
-# 4. Start frontend (new terminal)
+# 4. Frontend (new terminal)
 cd frontend && npm install && npm run dev
 ```
 
-**Backend**: http://localhost:8000  
-**Frontend**: http://localhost:5173
+**Backend**: http://localhost:8000 | **Frontend**: http://localhost:5173
 
-Test the skeleton:
-```bash
-echo "test" > test.pdf
-curl -X POST http://localhost:8000/api/deals/ -F "pitch_deck=@test.pdf"
-# Should return: {"error": "Not implemented"}
-```
+**Sample decks**: https://drive.google.com/drive/folders/1Dz7x752gZCGQDSSMcIMDL6Z5WOzrCUMd
 
 ---
 
 ## Your Task
 
-### Part 1: Backend - Information Extraction & Analysis
+### Backend (3 files to implement)
 
-**Implement these files:**
+**`backend/deals/services.py`**
+- Extract information from PDFs (you choose the approach)
+- Analyze with AI (OpenAI, Claude, etc.)
+- Assess investment quality
+- Save to database
 
-#### `backend/deals/services.py`
-Create functions to:
-- Extract text/information from PDF pitch decks
-- Use OpenAI API to analyze the deck
-- Assess investment opportunity quality
-- Save results to database
-
-**You decide:**
-- What information to extract (company details, market size, team backgrounds, traction, etc.)
-- How to structure the data
-- What metrics/scores matter for investment decisions
-- How to prompt OpenAI for best results
-
-#### `backend/deals/tasks.py`
+**`backend/deals/tasks.py`**
 - Implement async processing with Celery
-- Orchestrate the extraction and analysis pipeline
-- Handle errors gracefully
+- Orchestrate the pipeline
+- Handle errors
 
-#### `backend/deals/views.py`
-- Complete the `create()` endpoint to accept uploads
+**`backend/deals/views.py`**
+- Complete the `create()` endpoint
 - Trigger async processing
-- Return appropriate responses
 
-**Approach Options** (creativity encouraged):
-- **PDF Extraction**: PyPDF2, pdfminer, DocumentAI, multimodal vision models, etc.
-- **AI Analysis**: GPT-4o with vision, structured outputs, function calling, etc.
-- **Data Structure**: Design your own schema - what fields matter?
+**Creative freedom**: Choose your extraction method (PyPDF2, vision models, DocumentAI), design your data structure, decide what metrics matter.
 
-### Part 2: Frontend - Investment Analysis Display
+### Frontend (1 component to enhance)
 
-**Redesign: `frontend/src/components/DealDetail.tsx`**
+**`frontend/src/components/DealDetail.tsx`**
 
-The current frontend shows minimal information (just company name, website, location). 
+Currently shows: company name, website, location (very basic)
 
 **Your task**: Design and implement a comprehensive investment analysis view.
 
-**Consider displaying:**
-- Company overview and key metrics
-- Founder/team backgrounds and assessment
-- Market opportunity and size
-- Product/technology innovation
-- Business model and traction
-- Investment scores/ratings across relevant dimensions
-- Key strengths and concerns
-- Visual charts, graphs, or metrics
-- Any other insights useful for investment decisions
+Consider:
+- Company metrics and overview
+- Founder backgrounds
+- Market analysis
+- Investment scores/ratings
+- Strengths and concerns
+- Visualizations (charts, progress bars, etc.)
 
-**Design principles:**
-- Clear information hierarchy
-- Easy to scan and digest
-- Professional appearance
-- Appropriate visualizations
+**Design principles**: Clear hierarchy, easy to scan, professional, appropriate visualizations.
 
-You can modify types, add new components, restructure data - complete creative freedom.
-
----
-
-## Technical Requirements
-
-### Must Have
-- PDF processing (extract information from uploaded decks)
-- OpenAI API integration
-- Investment quality assessment across multiple dimensions
-- Async processing (Celery or similar)
-- Working end-to-end flow
-- Enhanced frontend displaying comprehensive analysis
-- Error handling
-
-### Nice to Have
-- Sophisticated extraction techniques (vision models, structured outputs)
-- Thoughtful assessment criteria reflecting real VC thinking
-- Beautiful, well-designed frontend interface
-- Data visualizations (charts, graphs, progress bars)
-- Comprehensive error handling and edge cases
-- Tests
+You can modify types, add components, restructure data - complete creative freedom.
 
 ---
 
 ## Project Structure
 
 ```
-backend/
-├── deals/
-│   ├── models.py          [Complete] Deal, Founder, Assessment models
-│   ├── serializers.py     [Complete]
-│   ├── views.py           [Skeleton] YOU COMPLETE
-│   ├── tasks.py           [Empty] YOU IMPLEMENT
-│   └── services.py        [Empty] YOU IMPLEMENT
-└── core/utils.py          [Complete] Helper functions provided
+backend/deals/
+├── models.py       [Complete] - Deal, Founder, Assessment models
+├── serializers.py  [Complete]
+├── views.py        [Skeleton] - YOU COMPLETE
+├── tasks.py        [Empty] - YOU IMPLEMENT  
+└── services.py     [Empty] - YOU IMPLEMENT
 
-frontend/
-├── components/
-│   ├── DealUpload.tsx     [Complete]
-│   ├── DealList.tsx       [Complete]
-│   └── DealDetail.tsx     [Basic] YOU REDESIGN & ENHANCE
-└── api/client.ts          [Complete]
+frontend/components/
+├── DealUpload.tsx  [Complete]
+├── DealList.tsx    [Complete]
+└── DealDetail.tsx  [Basic] - YOU REDESIGN & ENHANCE
 ```
 
 ---
 
-## What's Provided
+## Evaluation
 
-**Backend Infrastructure:**
-- Django + DRF configuration
-- Database models (Deal, Founder, Assessment)
-- Celery + Redis setup
-- API routing and serializers
-- Admin interface
-
-**Frontend:**
-- React + TypeScript + Vite
-- Upload interface
-- List view
-- Basic detail page (minimal - you enhance this!)
-- API client with polling
-
-**Utilities:**
-- Text sanitization helper
-- Logging decorator
-- Docker configuration
-
----
-
-## Testing
-
-```bash
-# Manual test
-curl -X POST http://localhost:8000/api/deals/ \
-  -F "pitch_deck=@your_deck.pdf"
-
-# Get status
-curl http://localhost:8000/api/deals/{deal_id}/status/
-
-# View in browser
-open http://localhost:5173/deals/{deal_id}
-```
-
-The frontend polls every 2 seconds while processing, automatically updating when complete.
-
----
-
-## Evaluation Criteria
-
-### 1. Information Extraction (30%)
-- Successfully extracts text/data from PDFs
-- Identifies relevant information for investment decisions
-- Handles various PDF formats and structures
-- Graceful error handling
-
-### 2. Investment Analysis Quality (30%)
-- Thoughtful assessment of startup quality
-- Evaluation across relevant dimensions (team, market, product, etc.)
-- Scores/ratings reflect reasonable VC thinking
-- Clear identification of strengths and risks
-
-### 3. Frontend Design & Implementation (30%)
-- Well-designed, professional interface
-- Clear information hierarchy
-- Appropriate visualizations
-- Good UX (easy to understand analysis at a glance)
-- Clean, maintainable code
-
-### 4. Code Quality (10%)
-- Clean, readable code
-- Proper error handling
-- Good architecture
-- Appropriate documentation
+1. **Information Extraction (30%)** - Successfully extracts relevant data, handles various PDFs
+2. **Investment Analysis (30%)** - Thoughtful assessment, reflects VC thinking, clear insights
+3. **Frontend Design (30%)** - Professional interface, good UX, appropriate visualizations
+4. **Code Quality (10%)** - Clean, maintainable, well-structured
 
 ---
 
 ## Submission
 
-### 1. Fork This Repository
-Click the "Fork" button on GitHub to create your own copy of this repository.
+1. **Fork** this repository
+2. **Clone** your fork: `git clone https://github.com/YOUR_USERNAME/interview_test.git`
+3. **Implement** your solution
+4. **Document** your approach at the end of this README:
+   - What you extracted and why
+   - Design decisions
+   - Trade-offs made
+   - Testing instructions
+5. **Push** to your fork
+6. **Open a PR** from your fork → this repo with:
+   - Summary of your approach
+   - Any assumptions
+   - How to test
 
-### 2. Clone Your Fork
-```bash
-git clone https://github.com/YOUR_USERNAME/pitch-deck-analyzer.git
-cd pitch-deck-analyzer
-```
-
-### 3. Implement Your Solution
-Complete the required files and enhance the frontend.
-
-### 4. Document Your Approach
-Add a section at the end of this README explaining:
-- **Your approach**: What did you extract? How did you assess quality?
-- **Design decisions**: Why did you structure the frontend this way?
-- **Trade-offs**: What compromises did you make?
-- **Future improvements**: What would you add with more time?
-
-### 5. Commit & Push to Your Fork
-```bash
-git add .
-git commit -m "Implement pitch deck analyzer"
-git push origin main
-```
-
-### 6. Open a Pull Request
-1. Go to your fork on GitHub
-2. Click "Contribute" → "Open pull request"
-3. Create a PR from `your-fork/main` to the original repository
-4. In the PR description, include:
-   - Brief summary of your approach
-   - Any assumptions or questions
-   - Instructions for testing your implementation
-
-**Note**: Your work is private to you. Other candidates cannot see your PR or implementation.
+**Note**: Your work is private. Other candidates cannot see your PR.
 
 ---
 
 ## Tips
 
-- **Start with data extraction** - Get basic PDF → structured data working first
-- **Think like a VC** - What information would you want when evaluating a deal?
-- **Design the data model** - What fields/structure make sense?
-- **Iterate on the frontend** - Sketch the layout before implementing
-- **Test incrementally** - Don't wait until everything is done
-- **Be creative** - There's no single "right" answer
+- Start with data extraction first
+- Think like a VC - what info matters?
+- Design your data model thoughtfully
+- Test incrementally
+- Be creative - no single "right" answer
 
 ---
 
-## Architecture Overview
+## What VCs Evaluate
 
-```
-User uploads PDF
-  ↓
-Django REST API endpoint
-  ↓
-Celery async task triggered
-  ↓
-Extract information from PDF (your approach)
-  ↓
-Analyze with OpenAI API (your prompts)
-  ↓
-Save structured data to database
-  ↓
-Frontend polls for updates
-  ↓
-Display comprehensive analysis (your design)
-```
+- **Team**: Backgrounds, experience, complementary skills
+- **Market**: Size (TAM/SAM/SOM), growth rate, competition
+- **Product**: Differentiation, technical moats, innovation
+- **Traction**: Revenue, users, growth metrics
+- **Business Model**: Unit economics, scalability, profitability path
+
+Your analysis should reflect these dimensions.
 
 ---
 
-## Domain Context: What VCs Look For
-
-When evaluating startups, investors typically assess:
-
-- **Team**: Founder backgrounds, relevant experience, complementary skills, execution ability
-- **Market**: Size (TAM/SAM/SOM), growth rate, timing, competition
-- **Product**: Differentiation, technical moats, innovation, IP
-- **Traction**: Revenue, users, growth rate, metrics
-- **Business Model**: Unit economics, scalability, path to profitability
-- **Risks**: Technical, market, execution, competitive, regulatory
-
-Your analysis should reflect understanding of these dimensions.
-
----
-
-## Resources
-
-- **Django REST Framework**: https://www.django-rest-framework.org/
-- **Celery**: https://docs.celeryq.dev/
-- **OpenAI API**: https://platform.openai.com/docs/
-- **React Query**: https://tanstack.com/query/latest
-- **TailwindCSS**: https://tailwindcss.com/docs
-
----
-
-## Questions?
-
-Note any questions or assumptions in your README submission. Clear communication is valued.
-
-Good luck - we're excited to see your solution!
+Good luck!
