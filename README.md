@@ -237,25 +237,42 @@ The frontend polls every 2 seconds while processing, automatically updating when
 
 ## Submission
 
-### 1. Implement Your Solution
+### 1. Fork This Repository
+Click the "Fork" button on GitHub to create your own copy of this repository.
+
+### 2. Clone Your Fork
+```bash
+git clone https://github.com/YOUR_USERNAME/pitch-deck-analyzer.git
+cd pitch-deck-analyzer
+```
+
+### 3. Implement Your Solution
 Complete the required files and enhance the frontend.
 
-### 2. Document Your Approach
-Add a section to `README.md` explaining:
+### 4. Document Your Approach
+Add a section at the end of this README explaining:
 - **Your approach**: What did you extract? How did you assess quality?
 - **Design decisions**: Why did you structure the frontend this way?
 - **Trade-offs**: What compromises did you make?
 - **Future improvements**: What would you add with more time?
 
-### 3. Commit & Push
+### 5. Commit & Push to Your Fork
 ```bash
 git add .
 git commit -m "Implement pitch deck analyzer"
 git push origin main
 ```
 
-### 4. Share Repository
-Send us the link to your fork.
+### 6. Open a Pull Request
+1. Go to your fork on GitHub
+2. Click "Contribute" → "Open pull request"
+3. Create a PR from `your-fork/main` to the original repository
+4. In the PR description, include:
+   - Brief summary of your approach
+   - Any assumptions or questions
+   - Instructions for testing your implementation
+
+**Note**: Your work is private to you. Other candidates cannot see your PR or implementation.
 
 ---
 
