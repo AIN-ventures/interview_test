@@ -112,16 +112,15 @@ frontend/components/
 1. **Fork** this repository
 2. **Clone** your fork: `git clone https://github.com/YOUR_USERNAME/interview_test.git`
 3. **Implement** your solution
-4. **Document** your approach at the end of this README:
-   - What you extracted and why
-   - Design decisions
-   - Trade-offs made
-   - Testing instructions
-5. **Push** to your fork
-6. **Open a PR** from your fork → this repo with:
-   - Summary of your approach
-   - Any assumptions
-   - How to test
+4. **Push** to your fork
+5. **Open a Pull Request** from your forked branch → this repository
+
+In your PR description, include:
+- **What you implemented**: Overview of the code you wrote
+- **Major design decisions**: Key technical choices and why you made them
+- **Production considerations**: Anything relevant for introducing this code to production (error handling, scalability, monitoring, security, etc.)
+- **Testing instructions**: How to test your implementation
+- **Trade-offs**: What you optimized for and what you deprioritized
 
 **Note**: Your work is private. Other candidates cannot see your PR.
 
