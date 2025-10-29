@@ -43,19 +43,57 @@ class DealViewSet(viewsets.ModelViewSet):
         """
         Handle pitch deck upload and trigger processing.
         
-        TODO: Implement this method
-        
-        You need to:
+        Steps:
         1. Validate the uploaded file using DealCreateSerializer
         2. Save the Deal instance
-        3. Trigger your async processing task
+        3. Trigger async processing task
         4. Return appropriate response
         """
-        # TODO: Your implementation here
-        return Response(
-            {"error": "Not implemented"},
-            status=status.HTTP_501_NOT_IMPLEMENTED
-        )
+        # Step 1: Validate the uploaded file
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(
+                {"errors": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Step 2: Save the Deal instance with 'uploaded' status
+        deal = serializer.save(status='uploaded')
+        
+        # Step 3: Trigger async processing task
+        from .tasks import process_deal_async
+        
+        try:
+            # Convert UUID to string for Celery task
+            task = process_deal_async.delay(str(deal.id))
+            
+            # Step 4: Return appropriate response
+            return Response(
+                {
+                    "id": deal.id,
+                    "status": deal.status,
+                    "message": "Pitch deck uploaded successfully. Processing started.",
+                    "task_id": task.id,
+                    "created_at": deal.created_at
+                },
+                status=status.HTTP_201_CREATED
+            )
+            
+        except Exception as e:
+            # If task creation fails, update deal status and return error
+            deal.status = 'failed'
+            deal.error_message = f"Failed to start processing: {str(e)}"
+            deal.save()
+            
+            return Response(
+                {
+                    "id": deal.id,
+                    "status": deal.status,
+                    "error": "Failed to start processing. Please try again.",
+                    "details": str(e)
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
     
     def retrieve(self, request, *args, **kwargs):
         """Get full deal details"""
