@@ -73,7 +73,6 @@ Consider:
 - Market analysis
 - Investment scores/ratings
 - Strengths and concerns
-- Visualizations (charts, progress bars, etc.)
 
 **Design principles**: Clear hierarchy, easy to scan, professional, appropriate visualizations.
 
