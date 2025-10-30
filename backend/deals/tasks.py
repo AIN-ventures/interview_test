@@ -1,31 +1,26 @@
-"""
-Celery tasks for asynchronous pitch deck processing.
-
-TODO: Implement async processing task
-
-Requirements:
-- Use @shared_task decorator from Celery
-- Accept deal_id as parameter
-- Update Deal status appropriately (processing → completed/failed)
-- Call your service functions to extract and analyze
-- Handle errors gracefully
-
-Example structure:
-
+import logging
 from celery import shared_task
-from core.utils import log_task_execution
+from .services import process_pitch_deck
 from .models import Deal
-from .services import your_functions_here
+
+logger = logging.getLogger(__name__)
 
 @shared_task
-@log_task_execution
-def process_deal_async(deal_id):
+def analyze_pitch_deck(deal_id: int):
+    """
+    Celery task to run the pitch deck analysis asynchronously.
+    """
+    logger.info(f"Celery task started for deal_id: {deal_id}")
     try:
-        # Your implementation here
-        pass
+        # Call the main function from services.py
+        process_pitch_deck(deal_id)
+        logger.info(f"Celery task finished for deal_id: {deal_id}")
     except Exception as e:
-        # Handle errors
-        pass
-"""
-
-# TODO: Import necessary modules and implement your task function
+        logger.error(f"Celery task failed for deal_id {deal_id}: {e}")
+        # If a major error happens, mark the deal as failed
+        try:
+            deal = Deal.objects.get(id=deal_id)
+            deal.status = 'failed'
+            deal.save()
+        except Deal.DoesNotExist:
+            logger.error(f"Deal {deal_id} not found when trying to mark as failed.")

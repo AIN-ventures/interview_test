@@ -1,18 +1,5 @@
 /**
- * BASIC deal detail view - Shows minimal information
- * 
- * TODO (CANDIDATE): Redesign this component to show richer investment analysis
- * 
- * Consider displaying:
- * - Detailed company information
- * - Founder backgrounds and experience
- * - Market analysis and opportunity size
- * - Investment assessment scores/ratings
- * - Key strengths and risks
- * - Visual charts or metrics
- * - Any other insights relevant for VC decision-making
- * 
- * The design and information architecture is up to you!
+ * Enhanced Deal Detail View - Comprehensive Investment Analysis Dashboard
  */
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
@@ -20,7 +7,7 @@ import { fetchDealById } from '../api/client';
 
 export function DealDetail() {
   const { id } = useParams<{ id: string }>();
-  
+
   const { data: deal, isLoading } = useQuery({
     queryKey: ['deal', id],
     queryFn: () => fetchDealById(id!),
@@ -48,13 +35,39 @@ export function DealDetail() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-7xl mx-auto">
+      {/* Header Section */}
       <div className="bg-white shadow rounded-lg p-6">
         <div className="flex justify-between items-start mb-4">
-          <h2 className="text-2xl font-bold">
-            {deal.company_name || 'Processing...'}
-          </h2>
-          <StatusBadge status={deal.status} />
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              {deal.company_name || 'Processing...'}
+            </h1>
+            {deal.website && (
+              <a
+                href={deal.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline text-sm mt-1 inline-block"
+              >
+                {deal.website}
+              </a>
+            )}
+            {deal.location && (
+              <p className="text-gray-600 text-sm mt-1">📍 {deal.location}</p>
+            )}
+          </div>
+          <div className="flex items-center gap-4">
+            <StatusBadge status={deal.status} />
+            {deal.assessment && (
+              <div className="text-center">
+                <div className="text-3xl font-bold text-blue-600">
+                  {deal.assessment.investment_score}/10
+                </div>
+                <div className="text-xs text-gray-500">Investment Score</div>
+              </div>
+            )}
+          </div>
         </div>
 
         {deal.status === 'failed' && (
@@ -72,55 +85,160 @@ export function DealDetail() {
             </div>
           </div>
         )}
+      </div>
 
-        {deal.status === 'completed' && (
-          <div className="space-y-4">
-            {/* BASIC DISPLAY - Candidates should enhance this! */}
-            
-            {deal.website && (
-              <div>
-                <p className="text-sm text-gray-500">Website</p>
-                <a 
-                  href={deal.website} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="text-blue-600 hover:underline"
-                >
-                  {deal.website}
-                </a>
-              </div>
-            )}
+      {deal.status === 'completed' && deal.assessment && (
+        <>
+          {/* Investment Analysis Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Market Analysis */}
+            <AnalysisCard
+              title="Market Analysis"
+              icon="📊"
+              content={deal.assessment.market_analysis}
+            />
 
-            {deal.location && (
-              <div>
-                <p className="text-sm text-gray-500">Location</p>
-                <p className="text-gray-900">{deal.location}</p>
-              </div>
-            )}
+            {/* Product Analysis */}
+            <AnalysisCard
+              title="Product Analysis"
+              icon="🚀"
+              content={deal.assessment.product_analysis}
+            />
 
-            {deal.technology_description && (
-              <div>
-                <p className="text-sm text-gray-500">Description</p>
-                <p className="text-gray-700">{deal.technology_description}</p>
-              </div>
-            )}
+            {/* Business Model */}
+            <AnalysisCard
+              title="Business Model"
+              icon="💼"
+              content={deal.assessment.business_model}
+            />
+          </div>
 
-            {/* TODO: Display founders, assessment, metrics, etc. */}
-            {/* Design your own layout and visualizations here! */}
-            
-            <div className="mt-8 p-4 bg-gray-50 rounded border-2 border-dashed border-gray-300">
-              <p className="text-gray-600 text-sm">
-                <strong>TODO:</strong> Enhance this view to display comprehensive investment analysis.
-                Consider adding visualizations, metrics, founder details, market analysis, etc.
+          {/* Traction */}
+          {deal.assessment.traction_analysis && (
+            <div className="bg-white shadow rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                📈 Traction & Metrics
+              </h3>
+              <p className="text-gray-700 whitespace-pre-line">
+                {deal.assessment.traction_analysis}
               </p>
             </div>
+          )}
+
+          {/* Founders */}
+          {deal.founders && deal.founders.length > 0 && (
+            <div className="bg-white shadow rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                👥 Team & Founders
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {deal.founders.map((founder, idx) => (
+                  <div
+                    key={idx}
+                    className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors"
+                  >
+                    <h4 className="font-semibold text-gray-900">{founder.name}</h4>
+                    <p className="text-sm text-gray-600 mt-1 whitespace-pre-line">
+                      {founder.bio}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Strengths and Concerns */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Strengths */}
+            <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-green-900 mb-3 flex items-center gap-2">
+                ✅ Key Strengths
+              </h3>
+              <div className="text-gray-800 whitespace-pre-line space-y-2">
+                {deal.assessment.strengths.split('\n').map((strength, idx) => (
+                  <div key={idx} className="flex items-start gap-2">
+                    {strength.trim().startsWith('*') ? (
+                      <>
+                        <span className="text-green-600 mt-1">•</span>
+                        <span>{strength.replace(/^\*\s*/, '')}</span>
+                      </>
+                    ) : (
+                      <span>{strength}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Concerns */}
+            <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-red-900 mb-3 flex items-center gap-2">
+                ⚠️ Key Concerns & Risks
+              </h3>
+              <div className="text-gray-800 whitespace-pre-line space-y-2">
+                {deal.assessment.concerns.split('\n').map((concern, idx) => (
+                  <div key={idx} className="flex items-start gap-2">
+                    {concern.trim().startsWith('*') ? (
+                      <>
+                        <span className="text-red-600 mt-1">•</span>
+                        <span>{concern.replace(/^\*\s*/, '')}</span>
+                      </>
+                    ) : (
+                      <span>{concern}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-        )}
-      </div>
+
+          {/* Investment Score Visualization */}
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              🎯 Investment Assessment
+            </h3>
+            <div className="flex items-center justify-center">
+              <div className="text-center">
+                <div className="text-6xl font-bold text-blue-600 mb-2">
+                  {deal.assessment.investment_score}
+                  <span className="text-3xl text-gray-400">/10</span>
+                </div>
+                <div className="w-64 bg-gray-200 rounded-full h-3 mb-2">
+                  <div
+                    className="bg-blue-600 h-3 rounded-full transition-all duration-500"
+                    style={{ width: `${(deal.assessment.investment_score / 10) * 100}%` }}
+                  ></div>
+                </div>
+                <p className="text-gray-600 text-sm">
+                  {deal.assessment.investment_score >= 8
+                    ? '🔥 Strong Investment Opportunity'
+                    : deal.assessment.investment_score >= 6
+                    ? '✓ Worth Considering'
+                    : '⚡ High Risk / Early Stage'}
+                </p>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
 
+// Reusable Analysis Card Component
+function AnalysisCard({ title, icon, content }: { title: string; icon: string; content: string }) {
+  return (
+    <div className="bg-white shadow rounded-lg p-6 hover:shadow-lg transition-shadow">
+      <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+        <span>{icon}</span>
+        {title}
+      </h3>
+      <p className="text-gray-700 whitespace-pre-line leading-relaxed">{content}</p>
+    </div>
+  );
+}
+
+// Status Badge Component
 function StatusBadge({ status }: { status: string }) {
   const styles = {
     pending: 'bg-gray-100 text-gray-800',
@@ -131,7 +249,11 @@ function StatusBadge({ status }: { status: string }) {
   };
 
   return (
-    <span className={`px-3 py-1 rounded-full text-sm font-medium ${styles[status as keyof typeof styles] || styles.pending}`}>
+    <span
+      className={`px-3 py-1 rounded-full text-sm font-medium ${
+        styles[status as keyof typeof styles] || styles.pending
+      }`}
+    >
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </span>
   );
