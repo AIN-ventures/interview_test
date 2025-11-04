@@ -17,10 +17,6 @@ You have complete creative freedom in your approach:
 The core.utils module provides helper functions:
 - sanitize_text(text): Clean extracted text
 - log_task_execution: Decorator for logging (use on your task function)
-
-Note on OpenAI:
-- Use 'gpt-4o' or 'gpt-4-turbo' models (they support JSON response format)
-- The older 'gpt-4' model does NOT support response_format={"type": "json_object"}
 """
 
 import logging
